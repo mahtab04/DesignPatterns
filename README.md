@@ -46,11 +46,12 @@ Each principle has a **theory doc** (`.md`) and a **C++ implementation** (`.cpp`
 
 ## Creational Design Patterns
 
-| Pattern | Example | Code |
-|---------|---------|------|
-| **Builder** | Step-by-step object construction | [BuilderDesignPattern.cpp](CreationalDesign/Builder%20Design%20Pattern/BuilderDesignPattern.cpp) |
-| **Singleton** | Database connection | [DatabaseExample.cpp](CreationalDesign/SingletonDesign%20Pattern/DatabaseExample.cpp) |
-| **Singleton** | Logger instance | [Logger.cpp](CreationalDesign/SingletonDesign%20Pattern/Logger.cpp) |
+| Pattern | Example | Code | Documentation |
+|---------|---------|------|---|
+| **Builder** | Step-by-step object construction | [BuilderDesignPattern.cpp](CreationalDesign/Builder%20Design%20Pattern/BuilderDesignPattern.cpp) | [Theory](CreationalDesign/Builder%20Design%20Pattern/BuilderDesignPattern.md) |
+| **Builder** | HTTP Request construction | [HTTPRequestBuilder.cpp](CreationalDesign/Builder%20Design%20Pattern/HTTPRequestBuilder.cpp) | [HTTP Example](CreationalDesign/Builder%20Design%20Pattern/HTTPRequestBuilder.md) |
+| **Singleton** | Database connection | [DatabaseExample.cpp](CreationalDesign/SingletonDesign%20Pattern/DatabaseExample.cpp) | [Theory](CreationalDesign/SingletonDesign%20Pattern/singletondesignPattern.md) |
+| **Singleton** | Logger instance | [Logger.cpp](CreationalDesign/SingletonDesign%20Pattern/Logger.cpp) | [Theory](CreationalDesign/SingletonDesign%20Pattern/singletondesignPattern.md) |
 
 ---
 
@@ -68,9 +69,13 @@ g++ -std=c++17 -o output Solid/OpenClosedPrinciple.cpp
 All creational patterns use C++20 features (primarily `std::format`):
 
 ```bash
-# Builder Pattern
+# Builder Pattern - Computer Configuration
 g++ -std=c++20 -o builder CreationalDesign/Builder\ Design\ Pattern/BuilderDesignPattern.cpp
 ./builder
+
+# Builder Pattern - HTTP Request Construction
+g++ -std=c++20 -o http_request CreationalDesign/Builder\ Design\ Pattern/HTTPRequestBuilder.cpp
+./http_request
 
 # Singleton - Database Example
 g++ -std=c++20 -o database CreationalDesign/SingletonDesign\ Pattern/DatabaseExample.cpp
