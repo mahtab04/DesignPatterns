@@ -1,237 +1,155 @@
-// HTTP Request Builder Pattern — C++20 Implementation
-// Demonstrates building complex HTTP requests with multiple optional parts
+// Topic: Builder Pattern
 // Standard: C++20
 // Build: g++ -std=c++20 -o http_request HTTPRequestBuilder.cpp
 
 #include <format>
 #include <iostream>
-#include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
-// ========================
-// Product: HTTPRequest
-// ========================
-class HTTPRequest
+// ─────────────────────────────────────────────
+// Product: HttpRequest
+// ─────────────────────────────────────────────
+class HttpRequest
 {
 public:
-  struct QueryParam
+  std::string method;
+  std::string url;
+  std::vector<std::pair<std::string, std::string>> headers;
+  std::optional<std::string> body;
+  int timeoutMs{5000};
+
+  void print() const
   {
-    std::string key;
-    std::string value;
-  };
-
-  const std::string &getMethod() const { return method_; }
-  const std::string &getURL() const { return url_; }
-  const std::map<std::string, std::string> &getHeaders() const
-  {
-    return headers_;
-  }
-  const std::string &getBody() const { return body_; }
-  const std::vector<QueryParam> &getQueryParams() const
-  {
-    return query_params_;
-  }
-
-  void display() const
-  {
-    std::cout << std::format("═══════════════════════════════════\n");
-    std::cout << std::format("📨 HTTP {} Request\n", method_);
-    std::cout << std::format("URL: {}\n", url_);
-
-    if (!query_params_.empty())
-    {
-      std::cout << std::format("Query Parameters:\n");
-      for (const auto &param : query_params_)
-      {
-        std::cout << std::format("  • {} = {}\n", param.key, param.value);
-      }
-    }
-
-    if (!headers_.empty())
-    {
-      std::cout << std::format("Headers:\n");
-      for (const auto &[key, value] : headers_)
-      {
-        std::cout << std::format("  • {}: {}\n", key, value);
-      }
-    }
-
-    if (!body_.empty())
-    {
-      std::cout << std::format("Body:\n{}\n", body_);
-    }
-    std::cout << std::format("═══════════════════════════════════\n");
-  }
-
-private:
-  friend class HTTPRequestBuilder;
-
-  std::string method_{"GET"};
-  std::string url_;
-  std::map<std::string, std::string> headers_;
-  std::string body_;
-  std::vector<QueryParam> query_params_;
-};
-
-// ========================
-// Abstract Builder
-// ========================
-class HTTPRequestBuilder
-{
-public:
-  virtual ~HTTPRequestBuilder() = default;
-
-  HTTPRequestBuilder &setMethod(const std::string &method)
-  {
-    request_->method_ = method;
-    return *this;
-  }
-
-  HTTPRequestBuilder &setURL(const std::string &url)
-  {
-    request_->url_ = url;
-    return *this;
-  }
-
-  HTTPRequestBuilder &addHeader(const std::string &key,
-                                const std::string &value)
-  {
-    request_->headers_[key] = value;
-    return *this;
-  }
-
-  HTTPRequestBuilder &setBody(const std::string &body)
-  {
-    request_->body_ = body;
-    return *this;
-  }
-
-  HTTPRequestBuilder &addQueryParam(const std::string &key,
-                                    const std::string &value)
-  {
-    request_->query_params_.push_back({key, value});
-    return *this;
-  }
-
-  HTTPRequestBuilder &setContentType(const std::string &contentType)
-  {
-    request_->headers_["Content-Type"] = contentType;
-    return *this;
-  }
-
-  HTTPRequestBuilder &setAuthorization(const std::string &token)
-  {
-    request_->headers_["Authorization"] = std::format("Bearer {}", token);
-    return *this;
-  }
-
-  std::unique_ptr<HTTPRequest> build()
-  {
-    if (request_->url_.empty())
-    {
-      throw std::runtime_error("URL is required!");
-    }
-    return std::move(request_);
-  }
-
-protected:
-  HTTPRequestBuilder() : request_(std::make_unique<HTTPRequest>()) {}
-
-  std::unique_ptr<HTTPRequest> request_;
-};
-
-// ========================
-// Concrete Builder: Standard HTTP Builder
-// ========================
-class StandardHTTPBuilder : public HTTPRequestBuilder
-{
-public:
-  StandardHTTPBuilder() : HTTPRequestBuilder()
-  {
-    // Set default headers for standard HTTP requests
-    addHeader("User-Agent", "C++20-HTTPClient/1.0");
+    std::cout << std::format("  {} {}\n", method, url);
+    for (const auto &[k, v] : headers)
+      std::cout << std::format("  {}: {}\n", k, v);
+    if (body)
+      std::cout << std::format("  Body: {}\n", *body);
+    std::cout << std::format("  Timeout: {}ms\n", timeoutMs);
   }
 };
 
-// ========================
-// Concrete Builder: API Client Builder (for REST APIs)
-// ========================
-class APIClientBuilder : public HTTPRequestBuilder
+// ─────────────────────────────────────────────
+// Fluent Builder — HTTP Request (using smart pointers)
+// ─────────────────────────────────────────────
+class HttpRequestBuilder
 {
+  std::unique_ptr<HttpRequest> req_;
+
 public:
-  APIClientBuilder() : HTTPRequestBuilder()
-  {
-    // Set default headers for API requests
-    addHeader("User-Agent", "C++20-APIClient/1.0");
-    addHeader("Accept", "application/json");
-  }
+  HttpRequestBuilder() : req_{std::make_unique<HttpRequest>()} {}
 
-  APIClientBuilder &setAPIKey(const std::string &apiKey)
+  HttpRequestBuilder &get(std::string_view url)
   {
-    request_->headers_["X-API-Key"] = apiKey;
+    req_->method = "GET";
+    req_->url = url;
     return *this;
   }
 
-  APIClientBuilder &setJSONBody(const std::string &jsonData)
+  HttpRequestBuilder &post(std::string_view url)
   {
-    setContentType("application/json");
-    setBody(jsonData);
+    req_->method = "POST";
+    req_->url = url;
     return *this;
+  }
+
+  HttpRequestBuilder &put(std::string_view url)
+  {
+    req_->method = "PUT";
+    req_->url = url;
+    return *this;
+  }
+
+  HttpRequestBuilder &deleteReq(std::string_view url)
+  {
+    req_->method = "DELETE";
+    req_->url = url;
+    return *this;
+  }
+
+  HttpRequestBuilder &header(std::string_view key, std::string_view val)
+  {
+    req_->headers.emplace_back(key, val);
+    return *this;
+  }
+
+  HttpRequestBuilder &body(std::string_view b)
+  {
+    req_->body = std::string{b};
+    return *this;
+  }
+
+  HttpRequestBuilder &timeout(int ms)
+  {
+    req_->timeoutMs = ms;
+    return *this;
+  }
+
+  // Returns ownership via unique_ptr
+  [[nodiscard]] std::unique_ptr<HttpRequest> build()
+  {
+    return std::move(req_); // transfers ownership to caller
   }
 };
 
+// ─────────────────────────────────────────────
+// main
+// ─────────────────────────────────────────────
 int main()
 {
-  std::cout << std::format("\n🌐 HTTP Request Builder Pattern Examples\n\n");
+  std::cout << std::format("=== Builder Pattern (Fluent Interface) ===\n\n");
 
-  // Example 1: Simple GET request
-  std::cout << std::format("Example 1️⃣: Simple GET Request\n");
-  StandardHTTPBuilder getBuilder;
-  auto getRequest = getBuilder.setMethod("GET")
-                        .setURL("https://api.example.com/users")
-                        .addQueryParam("page", "1")
-                        .addQueryParam("limit", "10")
-                        .build();
-  getRequest->display();
+  // Example 1: GET Request
+  std::cout << std::format("📍 GET Request:\n");
+  auto getReq = HttpRequestBuilder{}
+                    .get("https://api.example.com/users")
+                    .header("Accept", "application/json")
+                    .header("Authorization", "Bearer token123")
+                    .timeout(3000)
+                    .build();
+  getReq->print();
 
-  // Example 2: POST request with body
-  std::cout << std::format("\nExample 2️⃣: POST Request with JSON Body\n");
-  StandardHTTPBuilder postBuilder;
-  auto postRequest = postBuilder.setMethod("POST")
-                         .setURL("https://api.example.com/users")
-                         .setContentType("application/json")
-                         .setBody(R"({"name":"John Doe","email":"john@example.com"})")
-                         .addHeader("Authorization", "Bearer abc123token")
-                         .build();
-  postRequest->display();
+  std::cout << '\n';
 
-  // Example 3: API Client with simplified builder
-  std::cout << std::format("\nExample 3️⃣: API Client Builder\n");
-  APIClientBuilder apiBuilder;
-  auto apiRequest = apiBuilder.setMethod("PUT")
-                        .setURL("https://api.github.com/repos/user/repo")
-                        .setAPIKey("ghp_1234567890abcdef")
-                        .setJSONBody(R"({"description":"Updated repo"})")
-                        .setAuthorization("personal-token-12345")
-                        .build();
-  apiRequest->display();
+  // Example 2: POST Request
+  std::cout << std::format("📤 POST Request:\n");
+  auto postReq = HttpRequestBuilder{}
+                     .post("https://api.example.com/users")
+                     .header("Content-Type", "application/json")
+                     .body(R"({"name":"Alice","age":30})")
+                     .build();
+  postReq->print();
 
-  // Example 4: Complex request with many parameters
-  std::cout << std::format("\nExample 4️⃣: Complex Request with Multiple Headers\n");
-  StandardHTTPBuilder complexBuilder;
-  auto complexRequest = complexBuilder.setMethod("POST")
-                            .setURL("https://api.example.com/search")
-                            .addQueryParam("q", "C++20")
-                            .addQueryParam("lang", "en")
-                            .addHeader("Accept-Language", "en-US")
-                            .addHeader("Accept-Encoding", "gzip, deflate")
-                            .addHeader("Connection", "keep-alive")
-                            .setContentType("application/x-www-form-urlencoded")
-                            .setBody("search_term=build+pattern&filter=recent")
-                            .build();
-  complexRequest->display();
+  std::cout << '\n';
+
+  // Example 3: PUT Request
+  std::cout << std::format("🔄 PUT Request:\n");
+  auto putReq = HttpRequestBuilder{}
+                    .put("https://api.example.com/users/42")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer token456")
+                    .body(R"({"name":"Charlie","email":"charlie@example.com"})")
+                    .timeout(5000)
+                    .build();
+  putReq->print();
+
+  std::cout << '\n';
+
+  // Example 4: Using shared_ptr for shared ownership
+  std::cout << std::format("🔗 Shared Ownership Example:\n");
+  std::shared_ptr<HttpRequest> shared = HttpRequestBuilder{}
+                                            .get("https://api.example.com/health")
+                                            .header("Accept", "*/*")
+                                            .timeout(1000)
+                                            .build();
+
+  auto copy = shared; // both point to the same request
+  std::cout << std::format("  shared_ptr use_count: {}\n", shared.use_count());
+  copy->print();
 
   return 0;
 }

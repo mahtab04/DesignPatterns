@@ -1,143 +1,115 @@
-// HTTP Request Builder Example Documentation
+// HTTP Request Builder — Fluent Interface Example
 
-# HTTP Request Builder Pattern
+# Fluent HTTP Request Builder
 
 ## Overview
-The HTTP Request Builder is a practical example of the Builder pattern used to construct complex HTTP requests with many optional components (headers, query parameters, authentication, body, etc.).
+A practical implementation of the Builder pattern using C++20's fluent interface for constructing HTTP requests with a clean, intuitive API.
 
-## Components
+## Key Components
 
-### Product: `HTTPRequest`
-Represents a complete HTTP request with:
-- HTTP method (GET, POST, PUT, DELETE, etc.)
-- URL
-- Headers (key-value pairs)
-- Query parameters
-- Request body
-- Display method for inspection
+### Product: `HttpRequest`
+Represents a complete HTTP request:
+- **method** — HTTP method (GET, POST, PUT, DELETE)
+- **url** — Request URL
+- **headers** — Vector of key-value header pairs
+- **body** — Optional request body
+- **timeoutMs** — Request timeout in milliseconds
+- **print()** — Display request details
 
-### Abstract Builder: `HTTPRequestBuilder`
-Provides a fluent interface for building requests:
-- `setMethod()` — Set HTTP method
-- `setURL()` — Set request URL
-- `addHeader()` — Add custom headers
-- `setBody()` — Set request body
-- `addQueryParam()` — Add query parameters
-- `setContentType()` — Convenience method for Content-Type header
-- `setAuthorization()` — Convenience method for Authorization header
-- `build()` — Return the constructed HTTPRequest
-
-### Concrete Builders
-
-#### `StandardHTTPBuilder`
-- Basic HTTP client builder
-- Sets default `User-Agent` header
-- Good for general-purpose requests
-
-#### `APIClientBuilder` (extends HTTPRequestBuilder)
-- Specialized for REST API calls
-- Sets default `Accept: application/json`
-- Provides `setAPIKey()` for API authentication
-- Provides `setJSONBody()` for convenience
+### Builder: `HttpRequestBuilder`
+Fluent builder with method chaining:
+- `get(url)` — Create GET request
+- `post(url)` — Create POST request
+- `put(url)` — Create PUT request
+- `deleteReq(url)` — Create DELETE request
+- `header(key, value)` — Add header
+- `body(content)` — Set request body
+- `timeout(ms)` — Set timeout
+- `build()` — Return constructed request as `unique_ptr`
 
 ## Key Features
 
-### Fluent Interface (Method Chaining)
+### 1. Fluent Interface (Method Chaining)
 ```cpp
-auto request = builder
-    .setMethod("POST")
-    .setURL("https://api.example.com/users")
-    .addHeader("Content-Type", "application/json")
-    .setBody(jsonData)
+auto request = HttpRequestBuilder{}
+    .get("https://api.example.com/users")
+    .header("Accept", "application/json")
+    .header("Authorization", "Bearer token")
+    .timeout(3000)
     .build();
 ```
 
-### Validation
-- Throws exception if URL is missing when building
-- Can be extended to validate other requirements
+### 2. C++20 Features Used
+- **`std::optional<std::string>`** — For optional body field
+- **`std::string_view`** — For parameter views (zero-copy)
+- **`std::format`** — For type-safe output formatting
+- **`std::unique_ptr`** — For automatic memory management
+- **`[[nodiscard]]`** — Compiler warning if build() result is ignored
+- **Structured bindings** — `for (const auto &[k, v] : headers)`
 
-### Type Safety
-- Uses C++20 `std::format` for safe string formatting
-- Compile-time type checking
+### 3. Ownership & Memory Management
+```cpp
+// build() returns unique_ptr - caller owns the object
+auto uptr = HttpRequestBuilder{}.get("url").build();
 
-### Extensibility
-- Easy to add new builder types (e.g., `GraphQLBuilder`, `SOAPBuilder`)
-- Convenience methods can be added to specific builders
+// Can convert to shared_ptr if needed
+std::shared_ptr<HttpRequest> sptr = HttpRequestBuilder{}.get("url").build();
+```
+
+### 4. Smart Defaults
+- Default timeout: 5000ms
+- Method chaining returns `*this` for fluency
+- Body is optional (uses `std::optional`)
 
 ## Usage Examples
 
-### Simple GET Request
+### GET Request
 ```cpp
-StandardHTTPBuilder builder;
-auto request = builder
-    .setMethod("GET")
-    .setURL("https://api.example.com/users")
-    .addQueryParam("page", "1")
-    .addQueryParam("limit", "10")
+auto getReq = HttpRequestBuilder{}
+    .get("https://api.example.com/users")
+    .header("Accept", "application/json")
+    .header("Authorization", "Bearer token123")
+    .timeout(3000)
     .build();
 ```
 
 ### POST with JSON
 ```cpp
-StandardHTTPBuilder builder;
-auto request = builder
-    .setMethod("POST")
-    .setURL("https://api.example.com/users")
-    .setContentType("application/json")
-    .setBody(R"({"name":"John","email":"john@example.com"})")
-    .setAuthorization("Bearer token123")
+auto postReq = HttpRequestBuilder{}
+    .post("https://api.example.com/users")
+    .header("Content-Type", "application/json")
+    .body(R"({"name":"Alice","age":30})")
     .build();
 ```
 
-### API Client with Special Builder
+### Shared Ownership
 ```cpp
-APIClientBuilder builder;
-auto request = builder
-    .setMethod("PUT")
-    .setURL("https://api.github.com/repos/user/repo")
-    .setAPIKey("ghp_xxxxx")
-    .setJSONBody(R"({"description":"Updated"})")
+std::shared_ptr<HttpRequest> shared = HttpRequestBuilder{}
+    .get("https://api.example.com/health")
+    .timeout(1000)
     .build();
+    
+auto copy = shared;  // Both own the same request
+std::cout << shared.use_count();  // Prints: 2
 ```
+
+## Design Patterns Applied
+
+| Pattern | How Used |
+|---------|----------|
+| **Builder** | Separate construction from representation |
+| **Fluent Interface** | Method chaining for readability |
+| **RAII** | Automatic cleanup with smart pointers |
 
 ## Benefits
 
-| Aspect | Benefit |
-|--------|---------|
-| **Readability** | Clear, fluent syntax shows request structure |
-| **Flexibility** | Easy to add/remove optional components |
-| **Safety** | Validation happens before request is built |
-| **Reusability** | Builder can be reused multiple times |
-| **Maintenance** | Adding new parameters doesn't require constructor changes |
-| **Testability** | Easy to create various test request combinations |
-
-## Real-World Use Cases
-
-- **HTTP Client Libraries** — Building requests before sending over network
-- **API Testing Frameworks** — Constructing test requests programmatically
-- **Web Scrapers** — Creating varied requests to different endpoints
-- **Microservices** — Building inter-service communication requests
-- **Mobile Apps** — Constructing network requests with optional auth/headers
-
-## Comparison: Without Builder vs With Builder
-
-### Without Builder (Problematic)
-```cpp
-// Requires constructor overloading or parameter objects
-HTTPRequest req("POST", "url", headers, body, queryParams, ...);
-```
-
-### With Builder (Clean)
-```cpp
-APIClientBuilder builder;
-auto req = builder
-    .setMethod("POST")
-    .setURL("url")
-    .addHeader("key", "value")
-    .setBody(body)
-    .addQueryParam("param", "value")
-    .build();
-```
+| Benefit | Reason |
+|---------|--------|
+| **Readability** | Clear, self-documenting code |
+| **Flexibility** | Optional components, no constructor overloading |
+| **Type Safety** | C++20 `std::format`, compile-time checks |
+| **Memory Safety** | Smart pointers prevent leaks |
+| **Simplicity** | No concrete builders needed, single class |
 
 ## Compilation
 
@@ -146,10 +118,41 @@ g++ -std=c++20 -o http_request HTTPRequestBuilder.cpp
 ./http_request
 ```
 
-## C++20 Features Used
+## Real-World Applications
 
-- `std::format` — Type-safe string formatting
-- `std::unique_ptr` — Smart pointer memory management
-- `std::map` — Header storage
-- `std::vector` — Query parameters collection
-- Structured bindings — `for (const auto &[key, value] : headers_)`
+- HTTP client libraries (curl, libhttppp)
+- REST API clients
+- Web scraping frameworks
+- Microservice communication
+- Testing frameworks for HTTP APIs
+
+## Comparison: Procedural vs Builder
+
+### Without Builder (Procedural)
+```cpp
+HttpRequest req;
+req.method = "POST";
+req.url = "https://api.example.com/users";
+req.headers.push_back({"Content-Type", "application/json"});
+req.headers.push_back({"Authorization", "Bearer token"});
+req.body = R"({"name":"Alice"})";
+req.timeoutMs = 5000;
+```
+
+### With Builder (Fluent)
+```cpp
+auto req = HttpRequestBuilder{}
+    .post("https://api.example.com/users")
+    .header("Content-Type", "application/json")
+    .header("Authorization", "Bearer token")
+    .body(R"({"name":"Alice"})")
+    .timeout(5000)
+    .build();
+```
+
+The builder approach is:
+- ✅ More readable
+- ✅ Self-documenting
+- ✅ Prevents invalid intermediate states
+- ✅ Clear intent with `get()`, `post()` methods
+
