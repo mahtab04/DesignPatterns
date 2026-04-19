@@ -1,12 +1,15 @@
-// Comment
+// Builder Design Pattern — C++20 Implementation
 // - used to create objects made from a bunch of other objects
 // - used to create a complex object from simpler objects
+// Standard: C++20
+// Build: g++ -std=c++20 -o builder BuilderDesignPattern.cpp
 
 // 1. Director   -> creates the object using the builder interface
 // 2. Builder    -> interface for creating the parts of the final object
 // 3. ConcreteBuilder -> implements the builder interface
 // 4. Product    -> the final object that is created
 
+#include <format>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -19,10 +22,10 @@ public:
   void SetGPU(const std::string &gpu) { gpu_ = gpu; }
   void SetRAM(int ram) { ram_ = ram; }
 
-  void ShowInfo()
+  void ShowInfo() const
   {
-    std::cout << "CPU: " << cpu_ << ", GPU: " << gpu_ << ", RAM: " << ram_
-              << "GB" << std::endl;
+    std::cout << std::format("  CPU: {}, GPU: {}, RAM: {}GB\n", cpu_, gpu_,
+                             ram_);
   }
 
 private:
@@ -100,13 +103,13 @@ int main()
   // Building a Gaming Computer
   GamingComputerBuilder gamingBuilder;
   auto gamingComputer = director.BuildComputer(gamingBuilder);
-  std::cout << "Gaming Computer Configuration:" << std::endl;
+  std::cout << std::format("🎮 Gaming Computer Configuration:\n");
   gamingComputer->ShowInfo();
 
   // Building a Work Computer
   WorkComputerBuilder workBuilder;
   auto workComputer = director.BuildComputer(workBuilder);
-  std::cout << "\nWork Computer Configuration:" << std::endl;
+  std::cout << std::format("\n💼 Work Computer Configuration:\n");
   workComputer->ShowInfo();
 
   return 0;

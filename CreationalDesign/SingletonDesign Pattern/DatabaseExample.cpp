@@ -1,6 +1,9 @@
-// Singleton Design Pattern
-//  Define a class that has only one instance and provides a global point of access to it.
+// Singleton Design Pattern — C++20 Implementation
+// Define a class that has only one instance and provides a global point of access to it.
+// Standard: C++20
+// Build: g++ -std=c++20 -o database DatabaseExample.cpp
 
+#include <format>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -37,18 +40,17 @@ public:
   // Database operations...
   void connect()
   {
-    std::cout << "Connected to " << database_name_ << " at " << host_
-              << std::endl;
+    std::cout << std::format("Connected to {} at {}\n", database_name_, host_);
   }
 
   void disconnect()
   {
-    std::cout << "Disconnected from " << database_name_ << std::endl;
+    std::cout << std::format("Disconnected from {}\n", database_name_);
   }
 
   void executeQuery(const std::string &query)
   {
-    std::cout << "Executing: " << query << std::endl;
+    std::cout << std::format("Executing: {}\n", query);
   }
 
   std::vector<std::string> getResults() const
@@ -69,8 +71,8 @@ int main()
   db2.disconnect();
 
   // Verify it's the same instance
-  std::cout << "\nSame instance? " << (&db1 == &db2 ? "Yes" : "No")
-            << std::endl;
+  std::cout << std::format("\nSame instance? {}\n",
+                           (&db1 == &db2 ? "Yes" : "No"));
 
   return 0;
 }

@@ -56,15 +56,27 @@ Each principle has a **theory doc** (`.md`) and a **C++ implementation** (`.cpp`
 
 ## How to Run
 
-Compile any `.cpp` file with a C++17 (or later) compiler:
+### SOLID Principles (C++17+)
+Compile with C++17 or later:
 
 ```bash
 g++ -std=c++17 -o output Solid/OpenClosedPrinciple.cpp
 ./output
 ```
 
-For C++20 features (used in Logger.cpp):
+### Creational Design Patterns (C++20)
+All creational patterns use C++20 features (primarily `std::format`):
+
 ```bash
+# Builder Pattern
+g++ -std=c++20 -o builder CreationalDesign/Builder\ Design\ Pattern/BuilderDesignPattern.cpp
+./builder
+
+# Singleton - Database Example
+g++ -std=c++20 -o database CreationalDesign/SingletonDesign\ Pattern/DatabaseExample.cpp
+./database
+
+# Singleton - Logger Example
 g++ -std=c++20 -o logger CreationalDesign/SingletonDesign\ Pattern/Logger.cpp
 ./logger
 ```
