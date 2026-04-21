@@ -68,6 +68,22 @@ Client → Director.BuildComputer(builder)
 - **Default initialization**: `ram_` is initialized to `0` to avoid undefined behavior.
 - **Extensibility**: Adding a new computer type (e.g., `ServerBuilder`) requires no changes to existing code.
 
+## Interview Clarifications
+
+### Is this example correct Builder usage?
+Yes. This is a valid Builder pattern implementation using the classic roles: Product, Abstract Builder, Concrete Builder(s), and Director.
+
+### Does Builder only mean creating different object types?
+No. Builder primarily separates the construction process from object representation.
+Creating different variants is a major benefit, but the main goal is controlled, step-wise construction.
+
+### What does "complex object" mean here?
+It means the object needs multiple construction steps and/or configurable parts.
+In this example, `Computer` is built in steps (`BuildCPU`, `BuildGPU`, `BuildRAM`) coordinated by `ComputerDirector`.
+
+### Quick interview line
+"Builder is used when object creation is step-wise or complex, and we want to separate construction logic from the final object representation."
+
 ## Builder Pattern vs Direct Construction
 
 | Aspect | Direct Construction | Builder Pattern |

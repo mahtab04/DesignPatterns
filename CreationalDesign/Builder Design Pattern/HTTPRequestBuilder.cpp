@@ -104,7 +104,7 @@ int main()
   std::cout << std::format("=== Builder Pattern (Fluent Interface) ===\n\n");
 
   // Example 1: GET Request
-  std::cout << std::format("📍 GET Request:\n");
+  std::cout << std::format("GET Request:\n");
   auto getReq = HttpRequestBuilder{}
                     .get("https://api.example.com/users")
                     .header("Accept", "application/json")
@@ -116,7 +116,7 @@ int main()
   std::cout << '\n';
 
   // Example 2: POST Request
-  std::cout << std::format("📤 POST Request:\n");
+  std::cout << std::format("POST Request:\n");
   auto postReq = HttpRequestBuilder{}
                      .post("https://api.example.com/users")
                      .header("Content-Type", "application/json")
@@ -127,7 +127,7 @@ int main()
   std::cout << '\n';
 
   // Example 3: PUT Request
-  std::cout << std::format("🔄 PUT Request:\n");
+  std::cout << std::format("PUT Request:\n");
   auto putReq = HttpRequestBuilder{}
                     .put("https://api.example.com/users/42")
                     .header("Content-Type", "application/json")
@@ -140,7 +140,7 @@ int main()
   std::cout << '\n';
 
   // Example 4: Using shared_ptr for shared ownership
-  std::cout << std::format("🔗 Shared Ownership Example:\n");
+  std::cout << std::format("Shared Ownership Example:\n");
   std::shared_ptr<HttpRequest> shared = HttpRequestBuilder{}
                                             .get("https://api.example.com/health")
                                             .header("Accept", "*/*")
@@ -148,7 +148,7 @@ int main()
                                             .build();
 
   auto copy = shared; // both point to the same request
-  std::cout << std::format("  shared_ptr use_count: {}\n", shared.use_count());
+  std::cout << std::format("shared_ptr use_count: {}\n", shared.use_count());
   copy->print();
 
   return 0;

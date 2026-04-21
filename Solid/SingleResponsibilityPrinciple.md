@@ -42,3 +42,14 @@ If the chef also had to serve food and collect payments, any change in billing w
 1. If you can describe what a class does using "and", it probably has too many responsibilities.
 2. A class should have only one reason to change.
 3. Separate **what** something does from **how** it presents or persists the result.
+
+## Interview Explanation (Quick Script)
+- "I first show a **non-SRP** `TodoList` where business logic, console input, and console output are in one class."
+- "That class has multiple reasons to change: task rules, UI format, and input behavior."
+- "Then I refactor using SRP into `TaskManager` (business logic), `TaskInput` (input), and `TaskUI` (output)."
+- "Now each class has one responsibility, so changes are isolated and testing is easier."
+- "I keep the non-SRP version only as reference, and run/demo only the SRP version."
+
+## Common Interview Follow-up Answer
+**Q: How do you identify SRP violation quickly?**  
+If a class can be described with "does X **and** Y", or different teams would request changes to the same class for unrelated reasons, it likely violates SRP.

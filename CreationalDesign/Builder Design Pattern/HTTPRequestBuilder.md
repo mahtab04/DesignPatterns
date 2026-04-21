@@ -27,6 +27,27 @@ Fluent builder with method chaining:
 - `timeout(ms)` — Set timeout
 - `build()` — Return constructed request as `unique_ptr`
 
+## Mermaid Diagram
+
+```mermaid
+flowchart TD
+    Client["Client (main)"]
+    Builder["HttpRequestBuilder"]
+    Product["HttpRequest (Product)"]
+    Shared["shared_ptr<HttpRequest>"]
+
+    Client -->|"1. Create builder"| Builder
+    Builder -->|"2. get()/post()/put()/deleteReq()"| Builder
+    Builder -->|"3. header()/body()/timeout()"| Builder
+    Builder -->|"4. build()"| Product
+    Product -->|"5. Optional shared ownership"| Shared
+
+    style Client fill:#4CAF50,color:#fff
+    style Builder fill:#2196F3,color:#fff
+    style Product fill:#FF9800,color:#fff
+    style Shared fill:#00BCD4,color:#fff
+```
+
 ## Key Features
 
 ### 1. Fluent Interface (Method Chaining)
@@ -125,6 +146,25 @@ g++ -std=c++20 -o http_request HTTPRequestBuilder.cpp
 - Web scraping frameworks
 - Microservice communication
 - Testing frameworks for HTTP APIs
+
+## Interview Clarifications
+
+### Is this example correct Builder usage?
+Yes. This is a valid **Builder + Fluent Interface** example.
+
+### Does Builder only mean creating different object types?
+No. Builder primarily separates **construction logic** from the final object representation.
+Creating different variants is a common benefit, but not the only goal.
+
+### Why is one product class (`HttpRequest`) still enough?
+"Complex object" means the object has multiple configurable parts and construction steps, not necessarily multiple product classes.
+In this example, complexity comes from:
+- Required and optional fields (`method`, `url`, optional `body`, headers, timeout)
+- Many valid combinations (GET without body, POST with body, custom headers, etc.)
+- Step-by-step readable construction through chaining
+
+### Quick interview line
+"Builder is useful when a single object has complex or step-wise construction, and we want readable object creation while keeping construction logic separate from the object."
 
 ## Comparison: Procedural vs Builder
 
