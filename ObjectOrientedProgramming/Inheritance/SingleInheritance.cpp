@@ -1,6 +1,6 @@
 // Topic: Inheritance
 // Standard: C++20
-// Build: g++ -std=c++20 -o inheritance Inheritance.cpp
+// Build: g++ -std=c++20 -o single_inheritance SingleInheritance.cpp
 
 #include <iostream>
 #include <string>
@@ -27,6 +27,11 @@ int main() {
 
     // Interview one-liner:
     // Inheritance allows a derived class to reuse base class members and add its own behavior.
+    //
+    // Additional interview points:
+    // 1) Use inheritance only for true "is-a" relation.
+    // 2) If only behavior reuse is needed, prefer composition.
+    // 3) In polymorphic base classes, add virtual destructor.
 
     return 0;
 }

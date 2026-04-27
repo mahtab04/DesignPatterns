@@ -17,6 +17,7 @@
 //     Abstraction   = WHAT is exposed to the user (interface design)
 // - Encapsulation is NOT just using 'private'. It's about designing a
 //   safe, minimal public interface that maintains class invariants.
+// - Expose operations, not raw state, to protect invariants over time.
 
 #include <iostream>
 #include <format>
@@ -72,6 +73,10 @@ int main() {
     // Follow-up Q: Is using 'struct' a violation of encapsulation?
     // A: Not necessarily. struct defaults to public, but you can still
     //    add private members. It's about design intent, not keyword.
+    //
+    // Additional interview points:
+    // - Keep invalid states unrepresentable through API design.
+    // - Validate on write paths (deposit/withdraw), not only at read time.
 
     return 0;
 }

@@ -15,6 +15,8 @@
 //     Encapsulation = hiding data (private members + public methods)
 // - In C++, abstract class = at least one pure virtual function (= 0).
 // - You CANNOT instantiate an abstract class directly.
+// - Keep interface small and stable; push changes to implementations.
+// - Prefer composition when abstraction hierarchy becomes hard to evolve.
 
 #include <iostream>
 #include <format>
@@ -81,6 +83,10 @@ int main() {
     // Follow-up Q: Can we have an abstract class with some implemented methods?
     // A: Yes — only needs one pure virtual. Other methods can have bodies.
     //    This is different from a pure interface (all pure virtual).
+    //
+    // Additional interview points:
+    // - Design interfaces around behavior boundaries (domain contracts).
+    // - Avoid leaking implementation details into abstract APIs.
 
     return 0;
 }

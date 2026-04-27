@@ -41,3 +41,13 @@
 ### Rule of Thumb
 - Use **compile-time polymorphism** when behavior is known at compile time and performance is critical.
 - Use **run-time polymorphism** when behavior must vary dynamically through a common interface.
+
+## 5-Year Interview Perspective
+
+### What interviewers expect beyond definition
+- Correct choice between inheritance-based polymorphism vs templates/composition.
+- Awareness of cost: virtual dispatch, binary size, template instantiation bloat.
+- API stability thinking: keep interfaces small and avoid breaking contracts.
+
+### Strong practical answer
+"I use run-time polymorphism when I need pluggable behavior through a stable interface, and compile-time polymorphism when type is known and hot-path performance matters."
