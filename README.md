@@ -8,13 +8,40 @@ A collection of **Design Pattern** and **SOLID Principle** examples implemented 
 
 ```
 DesignPatterns/
+├── BehavioralDesignPattern/
+│   ├── Observer.md
+│   └── ObserverDesignPattern.cpp
 ├── CreationalDesign/
 │   ├── Builder Design Pattern/
-│   │   └── BuilderDesignPattern.cpp
+│   │   ├── BuilderDesignPattern.cpp
+│   │   ├── BuilderDesignPattern.md
+│   │   ├── HTTPRequestBuilder.cpp
+│   │   └── HTTPRequestBuilder.md
+│   ├── Factory/
+│   │   ├── FactoryDesignPattern.cpp
+│   │   └── FactoryDesignPattern.md
 │   └── SingletonDesign Pattern/
 │       ├── DatabaseExample.cpp
 │       ├── Logger.cpp
 │       └── singletondesignPattern.md
+├── ObjectOrientedProgramming/
+│   ├── abstraction.cpp
+│   ├── Encapsulation.cpp
+│   ├── Inheritance/
+│   │   ├── MultilevelInheritance.cpp
+│   │   ├── MultilevelInheritance.md
+│   │   ├── MultipleInheritance.cpp
+│   │   ├── MultipleInheritance.md
+│   │   ├── SingleInheritance.cpp
+│   │   └── SingleInheritance.md
+│   └── Polymorphism/
+│       ├── Polymorphism.md
+│       ├── compile/
+│       │   ├── CompileTimePolymorphism.cpp
+│       │   └── CompileTimePolymorphism.md
+│       └── runtime/
+│           ├── RuntimePolymorphism.cpp
+│           └── RuntimePolymorphism.md
 └── Solid/
     ├── SingleResponsibilityPrinciple.md
     ├── singleResponsibilityPrinciple.cpp
@@ -50,8 +77,21 @@ Each principle has a **theory doc** (`.md`) and a **C++ implementation** (`.cpp`
 |---------|---------|------|---|
 | **Builder** | Step-by-step object construction | [BuilderDesignPattern.cpp](CreationalDesign/Builder%20Design%20Pattern/BuilderDesignPattern.cpp) | [Theory](CreationalDesign/Builder%20Design%20Pattern/BuilderDesignPattern.md) |
 | **Builder** | HTTP Request construction | [HTTPRequestBuilder.cpp](CreationalDesign/Builder%20Design%20Pattern/HTTPRequestBuilder.cpp) | [HTTP Example](CreationalDesign/Builder%20Design%20Pattern/HTTPRequestBuilder.md) |
+| **Factory** | Object creation through factory method | [FactoryDesignPattern.cpp](CreationalDesign/Factory/FactoryDesignPattern.cpp) | [Theory](CreationalDesign/Factory/FactoryDesignPattern.md) |
 | **Singleton** | Database connection | [DatabaseExample.cpp](CreationalDesign/SingletonDesign%20Pattern/DatabaseExample.cpp) | [Theory](CreationalDesign/SingletonDesign%20Pattern/singletondesignPattern.md) |
 | **Singleton** | Logger instance | [Logger.cpp](CreationalDesign/SingletonDesign%20Pattern/Logger.cpp) | [Theory](CreationalDesign/SingletonDesign%20Pattern/singletondesignPattern.md) |
+
+---
+
+## Object-Oriented Programming Basics
+
+| Topic | Example | Documentation |
+|------|---------|---------------|
+| **Inheritance** | [SingleInheritance.cpp](ObjectOrientedProgramming/Inheritance/SingleInheritance.cpp) | [Theory](ObjectOrientedProgramming/Inheritance/SingleInheritance.md) |
+| **Inheritance** | [MultilevelInheritance.cpp](ObjectOrientedProgramming/Inheritance/MultilevelInheritance.cpp) | [Theory](ObjectOrientedProgramming/Inheritance/MultilevelInheritance.md) |
+| **Inheritance** | [MultipleInheritance.cpp](ObjectOrientedProgramming/Inheritance/MultipleInheritance.cpp) | [Theory](ObjectOrientedProgramming/Inheritance/MultipleInheritance.md) |
+| **Polymorphism** | [CompileTimePolymorphism.cpp](ObjectOrientedProgramming/Polymorphism/compile/CompileTimePolymorphism.cpp) | [Theory](ObjectOrientedProgramming/Polymorphism/compile/CompileTimePolymorphism.md) |
+| **Polymorphism** | [RuntimePolymorphism.cpp](ObjectOrientedProgramming/Polymorphism/runtime/RuntimePolymorphism.cpp) | [Theory](ObjectOrientedProgramming/Polymorphism/runtime/RuntimePolymorphism.md) |
 
 ---
 
